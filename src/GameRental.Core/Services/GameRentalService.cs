@@ -80,4 +80,34 @@ public class GameRentalService
 
         return ServiceResult<Customer>.Success(customer);
     }
+
+    public ServiceResult<Rental> RentGame(int customerId, int gameId)
+    {
+        if (_customerById.TryGetValue(customerId, out Customer? customer) == false)
+        {
+            return ServiceResult<Rental>.Fail(ErrorType.NotFound, "Böyle bir müşteri yok.");
+        }
+        if (_gameById.TryGetValue(gameId, out Game? game) == false)
+        {
+            return ServiceResult<Rental>.Fail(ErrorType.NotFound, "Böyle bir oyun yok.");
+        }
+        if (customer.Age < game.AgeLimit)
+        {
+            return ServiceResult<Rental>.Fail(ErrorType.Validation, $"Bu oyun +{game.AgeLimit} yaş içindir, müşteri {customer.Age} yaşında.");
+        }
+        if (game.CanBeRented() == false)
+        {
+            return ServiceResult<Rental>.Fail(ErrorType.Conflict, "Oyun şu an kiralanamaz (stok yok).");
+        }
+        if (game is PhysicalGame physical)
+        {
+            physical.StockCount--;
+        }
+        Rental rental = new Rental(_nextRentalId, customerId, gameId);
+        _nextRentalId++;
+        _rental.Add(rental);
+        _rentalById[rental.Id] = rental;
+
+        return ServiceResult<Rental>.Success(rental);
+    }
 }
