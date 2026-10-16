@@ -110,4 +110,21 @@ public class GameRentalService
 
         return ServiceResult<Rental>.Success(rental);
     }
+    public ServiceResult ReturnGame(int rentalId)
+    {
+        if (_rentalById.TryGetValue(rentalId, out Rental? rental) == false)
+        {
+            return ServiceResult.Fail(ErrorType.NotFound, "Böyle bir kiralama kaydı yok.");
+        }
+        if (rental.IsReturned)
+        {
+            return ServiceResult.Fail(ErrorType.Conflict, "Bu oyun zaten iade edilmiş.");
+        }
+        rental.IsReturned = true;
+        if (_gameById.TryGetValue(rental.GameId, out Game? game) && game is PhysicalGame physical)
+        {
+            physical.StockCount++;
+        }
+        return ServiceResult.Success();
+    }
 }
