@@ -38,4 +38,46 @@ public class GameRentalService
 
         return ServiceResult<Game>.Success(game);
     }
+
+    public ServiceResult<Game> AddDigitalGame(string title, string genre, int ageLimit, decimal dailyPrice, string platform)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return ServiceResult<Game>.Fail(ErrorType.Validation, "Oyun adı boş olamaz.");
+        }
+        if (dailyPrice <= 0)
+        {
+            return ServiceResult<Game>.Fail(ErrorType.Validation, "Günlük fiyat pozitif olmalı.");
+        }
+        if (string.IsNullOrWhiteSpace(platform))
+        {
+            return ServiceResult<Game>.Fail(ErrorType.Validation, "Platform adı boş olamaz.");
+        }
+
+        DigitalGame game = new DigitalGame(_nextGameId, title, genre, ageLimit, dailyPrice, platform);
+        
+        _nextGameId++;
+        _games.Add(game);
+        _gameById[game.Id] = game;
+
+        return ServiceResult<Game>.Success(game);
+    }
+    public ServiceResult<Customer> AddCustomer(string name, int age)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return ServiceResult<Customer>.Fail(ErrorType.Validation, "İsim boş olamaz.");
+        }
+        if (age <= 6)
+        {
+            return ServiceResult<Customer>.Fail(ErrorType.Validation, "Kullanıcının yaşı 7 veya daha büyük olmalı.");
+        }
+
+        Customer customer = new Customer(_nextCustomerId, name, age);
+        _nextCustomerId++;
+        _customer.Add(customer);
+        _customerById[customer.Id] = customer;
+
+        return ServiceResult<Customer>.Success(customer);
+    }
 }
