@@ -127,4 +127,26 @@ public class GameRentalService
         }
         return ServiceResult.Success();
     }
+
+    public IReadOnlyList<Game> GetGames()
+    {
+        return _games;
+    }
+    public IReadOnlyList<Customer> GetCustomers()
+    {
+        return _customer;
+    }
+    public IReadOnlyList<Rental> GetRentals()
+    {
+        return _rental;
+    }
+    public void SeedSampleGames()
+    {
+        AddPhysicalGame("FIFA 27", "Spor", 7, 30m, 3);
+        AddPhysicalGame("The Witcher 3 Remastered", "Aksiyon", 18, 45m, 2);
+        AddDigitalGame("Minecraft", "Macera", 7, 20m, "Steam");
+        AddDigitalGame("Call of Duty", "Aksiyon", 18, 50m, "PlayStation Store");
+        AddDigitalGame("Baldur's Gate 3", "RPG", 18, 70m, "Steam");
+        AddDigitalGame("TEKKEN", "Dövüş", 13, 35m, "Steam");
+    }
 }
