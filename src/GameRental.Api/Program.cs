@@ -1,3 +1,4 @@
+using GameRental.Api.Dtos;
 using GameRental.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,19 +15,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.MapGet("/api/games", (IGameRentalService service) => service.GetGames());
+
+app.MapGet("/api/games", (IGameRentalService service) =>
+    service.GetGames().Select(GameResponse.From));
 
 app.MapPost("/api/games/physical", (AddPhysicalGameRequest request, IGameRentalService service) =>
 {
     var result = service.AddPhysicalGame(request.Title, request.Genre, request.AgeLimit, request.DailyPrice, request.StockCount);
+
     if (result.IsSuccess)
     {
-        return Results.Created($"/api/games/{result.Value!.Id}", result.Value);
+        return Results.Created($"/api/games/{result.Value!.Id}", GameResponse.From(result.Value!));
     }
+
     return Results.BadRequest(new { error = result.Message });
 });
 
 app.Run();
-
-
-record AddPhysicalGameRequest(string Title, string Genre, int AgeLimit, decimal DailyPrice, int StockCount);
