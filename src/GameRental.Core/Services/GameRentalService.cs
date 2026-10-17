@@ -2,7 +2,7 @@ using GameRental.Core.Models;
 using GameRental.Core.Results;
 namespace GameRental.Core.Services;
 
-public class GameRentalService
+public class GameRentalService : IGameRentalService
 {
     private readonly List<Game> _games = new();
     private readonly Dictionary<int, Game> _gameById = new();
