@@ -1,2 +1,6 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GameRental.Api/GameRental.Api.csproj" />
+    <Project Path="src/GameRental.Core/GameRental.Core.csproj" />
+  </Folder>
 </Solution>
