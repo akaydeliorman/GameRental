@@ -42,4 +42,16 @@ app.MapPost("/api/games/digital", (AddDigitalGameRequest request, IGameRentalSer
     return Results.BadRequest(new { error = result.Message });
 });
 
+app.MapPost("/api/customers", (AddCustomerRequest request, IGameRentalService service) =>
+{
+    var result = service.AddCustomer(request.Name, request.Age);
+    if (result.IsSuccess)
+    {
+        return Results.Created($"/api/customers/{result.Value!.Id}", CustomerResponse.From(result.Value!));
+    }
+
+    return Results.BadRequest(new { error = result.Message });
+});
+app.MapGet("/api/customers", (IGameRentalService service) =>
+    service.GetCustomers().Select(CustomerResponse.From));
 app.Run();
