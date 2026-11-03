@@ -31,4 +31,15 @@ app.MapPost("/api/games/physical", (AddPhysicalGameRequest request, IGameRentalS
     return Results.BadRequest(new { error = result.Message });
 });
 
+app.MapPost("/api/games/digital", (AddDigitalGameRequest request, IGameRentalService service) =>
+{
+    var result = service.AddDigitalGame(request.Title, request.Genre, request.AgeLimit, request.DailyPrice, request.Platform);
+    if (result.IsSuccess)
+    {
+        return Results.Created($"/api/games/{result.Value!.Id}", GameResponse.From(result.Value!));
+    }
+
+    return Results.BadRequest(new { error = result.Message });
+});
+
 app.Run();
