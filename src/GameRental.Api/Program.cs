@@ -1,4 +1,5 @@
 using GameRental.Api.Dtos;
+using GameRental.Api.Helpers;
 using GameRental.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,4 +55,15 @@ app.MapPost("/api/customers", (AddCustomerRequest request, IGameRentalService se
 });
 app.MapGet("/api/customers", (IGameRentalService service) =>
     service.GetCustomers().Select(CustomerResponse.From));
+
+app.MapPost("/api/rentals", (RentGameRequest request, IGameRentalService service) =>
+{
+    var result = service.RentGame(request.CustomerId, request.GameId);
+    if (result.IsSuccess)
+    {
+        return Results.Created($"/api/rentals/{result.Value!.Id}", RentalResponse.From(result.Value!));
+    }
+    return ErrorResults.From(result.ErrorType, result.Message);
+});
+
 app.Run();
