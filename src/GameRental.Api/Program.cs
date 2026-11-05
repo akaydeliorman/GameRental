@@ -65,6 +65,7 @@ app.MapPost("/api/rentals", (RentGameRequest request, IGameRentalService service
     }
     return ErrorResults.From(result.ErrorType, result.Message);
 });
+
 app.MapPost("/api/rentals/{id}/return", (int id, IGameRentalService service) =>
 {
     var result = service.ReturnGame(id);
@@ -74,4 +75,7 @@ app.MapPost("/api/rentals/{id}/return", (int id, IGameRentalService service) =>
     }
     return ErrorResults.From(result.ErrorType, result.Message);
 });
+
+app.MapGet("/api/rentals", (IGameRentalService service) =>
+    service.GetRentals().Select(RentalResponse.From));
 app.Run();
